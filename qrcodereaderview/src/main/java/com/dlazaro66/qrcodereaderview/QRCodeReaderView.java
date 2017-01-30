@@ -76,6 +76,10 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
   public QRCodeReaderView(Context context, AttributeSet attrs) {
     super(context, attrs);
 
+    if (isInEditMode()) {
+      return;
+    }
+
     if (checkCameraHardware()) {
       mCameraManager = new CameraManager(getContext());
       mCameraManager.setPreviewCallback(this);
