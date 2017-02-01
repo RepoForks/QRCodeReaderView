@@ -249,7 +249,7 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
   // Called when camera take a frame
   @Override public void onPreviewFrame(byte[] data, Camera camera) {
     if (!mQrDecodingEnabled || (decodeFrameTask != null
-            && decodeFrameTask.getStatus() == AsyncTask.Status.RUNNING)) {
+        && decodeFrameTask.getStatus() == AsyncTask.Status.RUNNING)) {
       return;
     }
 
@@ -262,10 +262,12 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
     if (getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
       // this device has a camera
       return true;
-    } else if (getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
+    } else if (getContext().getPackageManager()
+            .hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
       // this device has a front camera
       return true;
-    } else if (getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
+    } else if (getContext().getPackageManager()
+            .hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
       // this device has any camera
       return true;
     } else {
@@ -285,7 +287,8 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
 
     Camera.CameraInfo info = new Camera.CameraInfo();
     android.hardware.Camera.getCameraInfo(mCameraManager.getPreviewCameraId(), info);
-    WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+    WindowManager windowManager =
+            (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
     int rotation = windowManager.getDefaultDisplay().getRotation();
     int degrees = 0;
     switch (rotation) {
@@ -333,8 +336,12 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
       final BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
       try {
         return view.mQRCodeReader.decode(bitmap, hintsRef.get());
-      } catch (ChecksumException | NotFoundException | FormatException e) {
-        Log.d(TAG, "", e);
+      } catch (ChecksumException e) {
+        Log.d(TAG, "ChecksumException", e);
+      } catch (NotFoundException e) {
+        Log.d(TAG, "No QR Code found");
+      } catch (FormatException e) {
+        Log.d(TAG, "FormatException", e);
       } finally {
         view.mQRCodeReader.reset();
       }
@@ -350,7 +357,8 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
       // Notify we found a QRCode
       if (view != null && result != null && view.mOnQRCodeReadListener != null) {
         // Transform resultPoints to View coordinates
-        final PointF[] transformedPoints = transformToViewCoordinates(view, result.getResultPoints());
+        final PointF[] transformedPoints =
+                transformToViewCoordinates(view, result.getResultPoints());
         view.mOnQRCodeReadListener.onQRCodeRead(result.getText(), transformedPoints);
       }
     }
